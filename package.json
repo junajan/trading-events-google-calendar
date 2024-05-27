@@ -13,7 +13,8 @@
   "main": "app/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "sync-earnings-events": "node ./commands/sync-earnings-events.command.js"
+    "sync-earnings-events": "node ./commands/sync-earnings-events.command.js",
+    "sync-market-holiday-events": "node commands/sync-market-holiday-events.command.js"
   },
   "repository": {
     "type": "git",
