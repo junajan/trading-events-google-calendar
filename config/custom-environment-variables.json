@@ -1,0 +1,8 @@
+{
+  "calendarId": "CALENDAR_ID",
+  "symbols": "SYMBOLS",
+  "gcpCredentials": {
+    "clientEmail": "GCP_CLIENT_EMAIL",
+    "privateKey": "GCP_PRIVATE_KEY"
+  }
+}

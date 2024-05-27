@@ -1,0 +1,8 @@
+{
+  "calendarId": "",
+  "symbols": "AAPL,AMZN",
+  "gcpCredentials": {
+    "clientEmail":  "",
+    "privateKey": ""
+  }
+}

@@ -130,5 +130,5 @@ dist
 .pnp.*
 
 tmp
-credentials.json
 .idea
+config/local.json

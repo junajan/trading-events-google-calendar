@@ -40,6 +40,7 @@ export default class GoogleCalendarService {
     const result = await this.calendar.events.list({
       calendarId: this.calendarId,
       timeMin: new Date().toISOString(),
+      maxResults: 2500,
     });
     return result.data.items;
   }
