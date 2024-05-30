@@ -65,7 +65,7 @@ export async function syncEarningsEvents(calendarId, symbols) {
 
   const eventsToBeDeletedLength = Object.values(existingEventsMap).length;
   if (eventsToBeDeletedLength) {
-    log.info(`Deleting ${eventsToBeDeletedLength} obsolete event:`, eventMapKey);
+    log.info(`Deleting ${eventsToBeDeletedLength} obsolete events`);
     for (const [eventMapKey, event] of Object.entries(existingEventsMap)) {
       log.info(`Deleting obsolete event:`, eventMapKey);
       await GoogleCalendar.deleteEvent(event.id);

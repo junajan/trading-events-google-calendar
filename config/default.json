@@ -1,6 +1,7 @@
 {
   "calendarId": "",
   "symbols": "AAPL,AMZN",
+  "earningsHeadsupDays": 0,
   "gcpCredentials": {
     "clientEmail":  "",
     "privateKey": ""

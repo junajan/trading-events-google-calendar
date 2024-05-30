@@ -37,9 +37,12 @@ export default class GoogleCalendarService {
   }
 
   async listFutureEvents() {
+    const offsetDate = new Date();
+    offsetDate.setTime(0);
+
     const result = await this.calendar.events.list({
       calendarId: this.calendarId,
-      timeMin: new Date().toISOString(),
+      timeMin: offsetDate.toISOString(),
       maxResults: 2500,
     });
     return result.data.items;

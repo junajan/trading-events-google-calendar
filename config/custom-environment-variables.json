@@ -1,6 +1,7 @@
 {
   "calendarId": "CALENDAR_ID",
   "symbols": "SYMBOLS",
+  "earningsHeadsupDays": "EARNINGS_HEADSUP_DAYS",
   "gcpCredentials": {
     "clientEmail": "GCP_CLIENT_EMAIL",
     "privateKey": "GCP_PRIVATE_KEY"

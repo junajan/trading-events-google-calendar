@@ -3,6 +3,7 @@ import config from 'config';
 import log from './services/log.service.js';
 import * as earningsEventsModel from './models/earnings-events.model.js';
 import * as marketHolidayEventsModel from './models/market-holiday-events.model.js';
+import * as cpiEventsModel from '../app/models/cpi-events.model.js';
 
 const DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 const SYMBOLS = [...new Set(config.symbols.split(','))];
@@ -16,10 +17,14 @@ async function syncEarningsEvents() {
     lastSyncYear = currentYear;
   }
 
+  log.info('Syncing CPI events');
+  await cpiEventsModel.syncCPIEvents(config.calendarId);
+
   log.info('Syncing earning events');
   await earningsEventsModel.syncEarningsEvents(config.calendarId, SYMBOLS);
 }
 
+await cpiEventsModel.syncCPIEvents(config.calendarId);
 await marketHolidayEventsModel.syncMarketHolidayEvents(config.calendarId);
 await earningsEventsModel.syncEarningsEvents(config.calendarId, SYMBOLS);
 
