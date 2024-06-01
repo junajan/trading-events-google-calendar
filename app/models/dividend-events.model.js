@@ -4,24 +4,21 @@ import GoogleCalendarService from '../services/google-calendar.service.js';
 import YahooService from '../services/yahoo-finance.service.js';
 import log from '../services/log.service.js';
 
-const EVENT_SUMMARY_PREFIX = 'Earnings';
-const EVENT_EARNINGS_HISTORY_PREFIX = 'History:';
+const EVENT_SUMMARY_PREFIX = 'ExDividend';
 
 function getEventsMapKeyForEvent(event) {
   return `${event.summary} - ${event.start.date} - ${event.end.date}`;
 }
 
-function formatEarningsToCalendarEvent(earnings) {
-  const summary = `${EVENT_SUMMARY_PREFIX} ${earnings.symbol} - ${earnings.quarter}` + (
-    earnings.isDateEstimated ? ' - estimated' : ''
-  );
-  const history = earnings.history
-    .map(({date, actual, estimate}) => `${date}: actual: ${actual} | estimate: ${estimate}`)
-    .join('\n');
-  const description = `${EVENT_EARNINGS_HISTORY_PREFIX}\n${history}`;
+function formatDividendToCalendarEvent(dividend) {
   const startEndData = {
-    date: earnings.estimatedEarningsDate,
+    date: dividend.exDividendDate.toISOString().slice(0, 10),
   };
+  const summary = `${EVENT_SUMMARY_PREFIX} ${dividend.symbol} - ${dividend.rateQuaterly} ${dividend.currency}` + (
+    dividend.isDateEstimated ? ' - estimated' : ''
+  );
+  const description = `ExDividend date: ${dividend.exDividendDate.toISOString().slice(0, 10)}\n`
+    + `Payment date: ${dividend.paymentDate.toISOString().slice(0, 10)}`;
 
   return {
     summary,
@@ -31,7 +28,7 @@ function formatEarningsToCalendarEvent(earnings) {
   };
 }
 
-export async function syncEarningsEvents(calendarId, symbols) {
+export async function syncDividendEvents(calendarId, symbols) {
   const {gcpCredentials} = config;
   const GoogleCalendar = new GoogleCalendarService(gcpCredentials.clientEmail, gcpCredentials.privateKey, calendarId);
   const existingEvents = await GoogleCalendar.listFutureEvents();
@@ -46,14 +43,15 @@ export async function syncEarningsEvents(calendarId, symbols) {
       },
     }), {});
 
-  log.info(`Downloading earnings info for ${symbols.length} symbols`);
+  log.info(`Downloading dividend info for ${symbols.length} symbols`);
   const newEventDataListPromises = symbols.map(async (symbol) => {
-    const earnings = await YahooService.getEarningsData(symbol);
-    return formatEarningsToCalendarEvent(earnings);
+    const dividend = await YahooService.getDividendData(symbol);
+    return dividend && formatDividendToCalendarEvent(dividend);
   });
-  const newEventDataList = await Promise.all(newEventDataListPromises);
+  const newEventDataList = (await Promise.all(newEventDataListPromises))
+    .filter(Boolean);
 
-  log.info(`Syncing ${newEventDataList.length} earnings events`);
+  log.info(`Syncing ${newEventDataList.length} dividend events`);
   for (const event of newEventDataList) {
     const eventMapKey = getEventsMapKeyForEvent(event);
     if (existingEventsMap[eventMapKey]) {
@@ -67,7 +65,7 @@ export async function syncEarningsEvents(calendarId, symbols) {
 
   const eventsToBeDeletedLength = Object.values(existingEventsMap).length;
   if (eventsToBeDeletedLength) {
-    log.info(`Deleting ${eventsToBeDeletedLength} obsolete events`);
+    log.info(`Deleting ${eventsToBeDeletedLength} obsolete dividend events`);
     for (const [eventMapKey, event] of Object.entries(existingEventsMap)) {
       log.info(`Deleting obsolete event:`, eventMapKey);
       await GoogleCalendar.deleteEvent(event.id);

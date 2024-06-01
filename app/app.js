@@ -2,6 +2,7 @@ import config from 'config';
 
 import log from './services/log.service.js';
 import * as cpiEventsModel from '../app/models/cpi-events.model.js';
+import * as dividendEventsModel from './models/dividend-events.model.js';
 import * as earningsEventsModel from './models/earnings-events.model.js';
 import * as fedEventsModel from '../app/models/fed-events.model.js';
 import * as marketHolidayEventsModel from './models/market-holiday-events.model.js';
@@ -24,6 +25,9 @@ async function syncEarningsEvents() {
 
   log.info('Syncing CPI events');
   await cpiEventsModel.syncCPIEvents(config.calendarId);
+
+  log.info('Syncing dividend events');
+  await dividendEventsModel.syncDividendEvents(config.calendarId, SYMBOLS);
 
   log.info('Syncing earning events');
   await earningsEventsModel.syncEarningsEvents(config.calendarId, SYMBOLS);
