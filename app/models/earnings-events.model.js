@@ -12,7 +12,9 @@ function getEventsMapKeyForEvent(event) {
 }
 
 function formatEarningsToCalendarEvent(earnings) {
-  const summary = `${EVENT_SUMMARY_PREFIX} ${earnings.symbol} - ${earnings.quarter}`;
+  const summary = `${EVENT_SUMMARY_PREFIX} ${earnings.symbol} - ${earnings.quarter}` + (
+    earnings.isDateEstimated ? ' - estimated' : ''
+  );
   const history = earnings.history
     .map(({date, actual, estimate}) => `${date}: actual: ${actual} | estimate: ${estimate}`)
     .join('\n');

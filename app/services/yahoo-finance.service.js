@@ -9,14 +9,15 @@ async function getEarningsData (symbol) {
 
   const estimatedEarningsDateTimeStart = earningsChart.earningsDate[0];
   return {
-    symbol,
-    history: earningsChart.quarterly,
-    quarter: earningsChart.currentQuarterEstimateDate,
-    year: earningsChart.currentQuarterEstimateYear,
-    estimatedEarningsDateTimeStart,
-    estimatedEarningsDateTimeEnd: earningsChart.earningsDate[1] || earningsChart.earningsDate[0],
-    estimatedEarningsDateTime: estimatedEarningsDateTimeStart,
     estimatedEarningsDate: getDateFromDateTime(estimatedEarningsDateTimeStart),
+    estimatedEarningsDateTime: estimatedEarningsDateTimeStart,
+    estimatedEarningsDateTimeEnd: earningsChart.earningsDate[1] || earningsChart.earningsDate[0],
+    estimatedEarningsDateTimeStart,
+    history: earningsChart.quarterly,
+    isDateEstimated: earningsChart.isEarningsDateEstimate,
+    quarter: earningsChart.currentQuarterEstimateDate,
+    symbol,
+    year: earningsChart.currentQuarterEstimateYear,
   };
 }
 
