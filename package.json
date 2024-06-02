@@ -1,15 +1,16 @@
 {
   "name": "earnings-google-calendar",
-  "version": "0.0.2",
-  "description": "Fetch company earnings dates into google calendar.",
+  "version": "0.0.3",
+  "description": "Fetch scheduled company earnings, dividends, CPI report dates and other info into google calendar.",
   "main": "app/app.ts",
   "type": "module",
   "scripts": {
-    "sync-cpi-events": "node ./commands/sync-cpi-events.command.ts",
-    "sync-earnings-events": "node ./commands/sync-earnings-events.command.ts",
+    "run": "npx tsx app/app.ts",
+    "sync-cpi-events": "npx tsx ./commands/sync-cpi-events.command.ts",
+    "sync-earnings-events": "npx tsx ./commands/sync-earnings-events.command.ts",
     "sync-market-holiday-events": "node commands/sync-market-holiday-events.command.ts",
-    "sync-dividend-events": "node ./commands/sync-dividend-events.command.ts",
-    "sync-fed-events": "node ./commands/sync-fed-events.command.ts",
+    "sync-dividend-events": "npx tsx ./commands/sync-dividend-events.command.ts",
+    "sync-fed-events": "npx tsx ./commands/sync-fed-events.command.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -42,6 +43,7 @@
     "config": "^3.3.11",
     "googleapis": "^137.1.0",
     "nyse-holidays": "^1.2.0",
+    "tsx": "^4.11.0",
     "typescript": "^5.4.5",
     "yahoo-finance2": "^2.11.3"
   },
