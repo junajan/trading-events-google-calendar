@@ -132,3 +132,4 @@ dist
 tmp
 .idea
 config/local.json
+.DS_Store

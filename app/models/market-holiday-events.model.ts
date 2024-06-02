@@ -1,22 +1,22 @@
 import config from 'config';
-import nyseHolidays from 'nyse-holidays';
+import nyseHolidays, { Holiday } from 'nyse-holidays';
 
 import GoogleCalendarService from '../services/google-calendar.service.js';
 import log from '../services/log.service.js';
+import {getEventsMapKeyForEvent} from "../utils/events.util";
+import {calendar_v3} from "googleapis";
+import {EventMap} from "../types/event-map.type";
 
 const EVENT_SUMMARY_PREFIX = 'Market holiday';
 
-function getEventsMapKeyForEvent(event) {
-  return `${event.summary} - ${event.start.date} - ${event.end.date}`;
-}
-function isHolidayInFuture(holiday) {
+function isHolidayInFuture(holiday: Holiday): boolean {
   const holidayDate = new Date(holiday.dateString);
   const today = new Date(new Date().toISOString().slice(0,10));
 
   return holidayDate > today;
 }
 
-function formatHolidayToCalendarEvent(holiday) {
+function formatHolidayToCalendarEvent(holiday: Holiday): calendar_v3.Schema$Event {
   const summary = `${EVENT_SUMMARY_PREFIX} - ${holiday.name}`;
   const startEndData = {
     date: holiday.dateString,
@@ -30,7 +30,7 @@ function formatHolidayToCalendarEvent(holiday) {
   };
 }
 
-export async function syncMarketHolidayEvents(calendarId, symbols) {
+export async function syncMarketHolidayEvents(calendarId: string): Promise<void> {
   const currentYear = new Date().getFullYear();
   const holidays = nyseHolidays.getHolidays(currentYear);
   const newHolidayEvents = holidays
@@ -41,9 +41,9 @@ export async function syncMarketHolidayEvents(calendarId, symbols) {
   const GoogleCalendar = new GoogleCalendarService(gcpCredentials.clientEmail, gcpCredentials.privateKey, calendarId);
 
   const existingEvents = await GoogleCalendar.listFutureEvents();
-  const existingEventsMap = existingEvents
-    .filter((event) => event.summary.startsWith(EVENT_SUMMARY_PREFIX))
-    .reduce((all, event) => ({
+  const existingEventsMap: EventMap = existingEvents
+    .filter((event) => event.summary?.startsWith(EVENT_SUMMARY_PREFIX))
+    .reduce((all: EventMap, event) => ({
       ...all,
       [getEventsMapKeyForEvent(event)]: event,
     }), {});

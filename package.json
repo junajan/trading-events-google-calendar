@@ -1,21 +1,15 @@
 {
-  "dependencies": {
-    "@google-cloud/local-auth": "^3.0.1",
-    "cheerio": "1.0.0-rc.12",
-    "config": "^3.3.11",
-    "googleapis": "^137.1.0",
-    "nyse-holidays": "^1.2.0",
-    "yahoo-finance2": "^2.11.3"
-  },
-  "type": "module",
   "name": "earnings-google-calendar",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Fetch company earnings dates into google calendar.",
-  "main": "app/app.js",
+  "main": "app/app.ts",
+  "type": "module",
   "scripts": {
-    "sync-cpi-events": "node ./commands/sync-cpi-events.command.js",
-    "sync-earnings-events": "node ./commands/sync-earnings-events.command.js",
-    "sync-market-holiday-events": "node commands/sync-market-holiday-events.command.js",
+    "sync-cpi-events": "node ./commands/sync-cpi-events.command.ts",
+    "sync-earnings-events": "node ./commands/sync-earnings-events.command.ts",
+    "sync-market-holiday-events": "node commands/sync-market-holiday-events.command.ts",
+    "sync-dividend-events": "node ./commands/sync-dividend-events.command.ts",
+    "sync-fed-events": "node ./commands/sync-fed-events.command.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,15 +17,35 @@
     "url": "git+https://github.com/junajan/earnings-google-calendar.git"
   },
   "keywords": [
+    "trading",
     "stock",
     "earnings",
-    "google",
-    "calendar"
+    "dividends",
+    "cpi reports",
+    "market holidays",
+    "fed events",
+    "google calendar"
   ],
-  "author": "",
+  "author": {
+    "name": "Jan Juna",
+    "email": "mail@janjuna.cz",
+    "url": "https://janjuna.cz/"
+  },
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/junajan/earnings-google-calendar/issues"
   },
-  "homepage": "https://github.com/junajan/earnings-google-calendar#readme"
+  "homepage": "https://github.com/junajan/earnings-google-calendar#readme",
+  "dependencies": {
+    "@google-cloud/local-auth": "^3.0.1",
+    "cheerio": "1.0.0-rc.12",
+    "config": "^3.3.11",
+    "googleapis": "^137.1.0",
+    "nyse-holidays": "^1.2.0",
+    "typescript": "^5.4.5",
+    "yahoo-finance2": "^2.11.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.13.0"
+  }
 }

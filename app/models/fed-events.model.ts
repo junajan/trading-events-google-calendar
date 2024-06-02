@@ -3,17 +3,25 @@ import * as cheerio from 'cheerio';
 
 import GoogleCalendarService from '../services/google-calendar.service.js';
 import log from '../services/log.service.js';
+import {getEventsMapKeyForEvent} from "../utils/events.util";
+import {EventMap} from "../types/event-map.type";
+import {calendar_v3} from "googleapis";
 
 const FED_SCHEDULE_URL = 'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm';
 const EVENT_SUMMARY_PREFIX = 'FED';
 
+type FedEvent = {
+  date: Date,
+  dateString: string,
+  isSummaryOfEconomicProjections: boolean,
+}
+
 async function fetchFEDEvents() {
-  const fedEvents = [];
+  const fedEvents: FedEvent[] = [];
   const currentYear = new Date().getFullYear();
   const response = await fetch(FED_SCHEDULE_URL);
   const html = await response.text();
   const $ = cheerio.load(html);
-
 
   const rows = $('#article .panel-default:first .fomc-meeting');
 
@@ -42,18 +50,14 @@ async function fetchFEDEvents() {
   return fedEvents;
 }
 
-function getEventsMapKeyForEvent(event) {
-  return `${event.summary} - ${event.start.date} - ${event.end.date}`;
-}
-
-function isFEDInFuture(event) {
+function isFEDInFuture(event: FedEvent): boolean {
   const date = new Date(event.dateString);
   const today = new Date(new Date().toISOString().slice(0, 10));
 
   return date > today;
 }
 
-function formatCalendarEvent(event) {
+function formatCalendarEvent(event: FedEvent): calendar_v3.Schema$Event {
   const summary = `${EVENT_SUMMARY_PREFIX}` + (event.isSummaryOfEconomicProjections ? ' - Projection' : '');
   const startEndData = {
     date: event.dateString,
@@ -67,7 +71,7 @@ function formatCalendarEvent(event) {
   };
 }
 
-export async function syncFEDEvents(calendarId, symbols) {
+export async function syncFEDEvents(calendarId: string): Promise<void> {
   const fedEvents = await fetchFEDEvents();
 
   const newFEDEvents = fedEvents
@@ -78,9 +82,9 @@ export async function syncFEDEvents(calendarId, symbols) {
   const GoogleCalendar = new GoogleCalendarService(gcpCredentials.clientEmail, gcpCredentials.privateKey, calendarId);
 
   const existingEvents = await GoogleCalendar.listFutureEvents();
-  const existingEventsMap = existingEvents
-    .filter((event) => event.summary.startsWith(EVENT_SUMMARY_PREFIX))
-    .reduce((all, event) => ({
+  const existingEventsMap: EventMap = existingEvents
+    .filter((event) => event.summary?.startsWith(EVENT_SUMMARY_PREFIX))
+    .reduce((all: EventMap, event) => ({
       ...all,
       [getEventsMapKeyForEvent(event)]: event,
     }), {});

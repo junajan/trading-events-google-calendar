@@ -1,17 +1,16 @@
 import config from 'config';
+import {calendar_v3} from "googleapis";
 
 import GoogleCalendarService from '../services/google-calendar.service.js';
-import YahooService from '../services/yahoo-finance.service.js';
+import YahooService, { Earnings } from '../services/yahoo-finance.service.js';
 import log from '../services/log.service.js';
+import {getEventsMapKeyForEvent} from "../utils/events.util";
+import {EventMap} from "../types/event-map.type";
 
 const EVENT_SUMMARY_PREFIX = 'Earnings';
 const EVENT_EARNINGS_HISTORY_PREFIX = 'History:';
 
-function getEventsMapKeyForEvent(event) {
-  return `${event.summary} - ${event.start.date} - ${event.end.date}`;
-}
-
-function formatEarningsToCalendarEvent(earnings) {
+function formatEarningsToCalendarEvent(earnings: Earnings): calendar_v3.Schema$Event {
   const summary = `${EVENT_SUMMARY_PREFIX} ${earnings.symbol} - ${earnings.quarter}` + (
     earnings.isDateEstimated ? ' - estimated' : ''
   );
@@ -31,14 +30,14 @@ function formatEarningsToCalendarEvent(earnings) {
   };
 }
 
-export async function syncEarningsEvents(calendarId, symbols) {
+export async function syncEarningsEvents(calendarId: string, symbols: string[]): Promise<void> {
   const {gcpCredentials} = config;
   const GoogleCalendar = new GoogleCalendarService(gcpCredentials.clientEmail, gcpCredentials.privateKey, calendarId);
   const existingEvents = await GoogleCalendar.listFutureEvents();
 
-  const existingEventsMap = existingEvents
-    .filter((event) => event.summary.startsWith(EVENT_SUMMARY_PREFIX))
-    .reduce((all, event) => ({
+  const existingEventsMap: EventMap = existingEvents
+    .filter((event) => event.summary?.startsWith(EVENT_SUMMARY_PREFIX))
+    .reduce((all: EventMap, event: calendar_v3.Schema$Event) => ({
       ...all,
       [getEventsMapKeyForEvent(event)]: {
         ...event,
@@ -69,8 +68,10 @@ export async function syncEarningsEvents(calendarId, symbols) {
   if (eventsToBeDeletedLength) {
     log.info(`Deleting ${eventsToBeDeletedLength} obsolete events`);
     for (const [eventMapKey, event] of Object.entries(existingEventsMap)) {
-      log.info(`Deleting obsolete event:`, eventMapKey);
-      await GoogleCalendar.deleteEvent(event.id);
+      if (event.id) {
+        log.info(`Deleting obsolete event:`, eventMapKey);
+        await GoogleCalendar.deleteEvent(event.id);
+      }
     }
   }
 }

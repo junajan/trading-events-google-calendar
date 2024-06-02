@@ -1,20 +1,19 @@
 import config from 'config';
+import {calendar_v3} from "googleapis";
 
 import GoogleCalendarService from '../services/google-calendar.service.js';
-import YahooService from '../services/yahoo-finance.service.js';
+import YahooService, { Dividend } from '../services/yahoo-finance.service.js';
 import log from '../services/log.service.js';
+import {getEventsMapKeyForEvent} from "../utils/events.util";
+import {EventMap} from "../types/event-map.type";
 
 const EVENT_SUMMARY_PREFIX = 'ExDividend';
 
-function getEventsMapKeyForEvent(event) {
-  return `${event.summary} - ${event.start.date} - ${event.end.date}`;
-}
-
-function formatDividendToCalendarEvent(dividend) {
+function formatDividendToCalendarEvent(dividend: Dividend): calendar_v3.Schema$Event {
   const startEndData = {
     date: dividend.exDividendDate.toISOString().slice(0, 10),
   };
-  const summary = `${EVENT_SUMMARY_PREFIX} ${dividend.symbol} - ${dividend.rateQuaterly} ${dividend.currency}` + (
+  const summary = `${EVENT_SUMMARY_PREFIX} ${dividend.symbol} - ${dividend.rateQuarterly} ${dividend.currency}` + (
     dividend.isDateEstimated ? ' - estimated' : ''
   );
   const description = `ExDividend date: ${dividend.exDividendDate.toISOString().slice(0, 10)}\n`
@@ -28,14 +27,14 @@ function formatDividendToCalendarEvent(dividend) {
   };
 }
 
-export async function syncDividendEvents(calendarId, symbols) {
+export async function syncDividendEvents(calendarId: string, symbols: string[]): Promise<void> {
   const {gcpCredentials} = config;
   const GoogleCalendar = new GoogleCalendarService(gcpCredentials.clientEmail, gcpCredentials.privateKey, calendarId);
   const existingEvents = await GoogleCalendar.listFutureEvents();
 
-  const existingEventsMap = existingEvents
-    .filter((event) => event.summary.startsWith(EVENT_SUMMARY_PREFIX))
-    .reduce((all, event) => ({
+  const existingEventsMap: EventMap = existingEvents
+    .filter((event) => event.summary?.startsWith(EVENT_SUMMARY_PREFIX))
+    .reduce((all: EventMap, event) => ({
       ...all,
       [getEventsMapKeyForEvent(event)]: {
         ...event,
@@ -49,7 +48,7 @@ export async function syncDividendEvents(calendarId, symbols) {
     return dividend && formatDividendToCalendarEvent(dividend);
   });
   const newEventDataList = (await Promise.all(newEventDataListPromises))
-    .filter(Boolean);
+    .filter<calendar_v3.Schema$Event>((x): x is calendar_v3.Schema$Event => x !== undefined);
 
   log.info(`Syncing ${newEventDataList.length} dividend events`);
   for (const event of newEventDataList) {
@@ -67,8 +66,10 @@ export async function syncDividendEvents(calendarId, symbols) {
   if (eventsToBeDeletedLength) {
     log.info(`Deleting ${eventsToBeDeletedLength} obsolete dividend events`);
     for (const [eventMapKey, event] of Object.entries(existingEventsMap)) {
-      log.info(`Deleting obsolete event:`, eventMapKey);
-      await GoogleCalendar.deleteEvent(event.id);
+      if (event.id) {
+        log.info(`Deleting obsolete event:`, eventMapKey);
+        await GoogleCalendar.deleteEvent(event.id);
+      }
     }
   }
 }

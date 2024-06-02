@@ -9,10 +9,10 @@ import * as marketHolidayEventsModel from './models/market-holiday-events.model.
 
 const DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 const SYMBOLS = [...new Set(config.symbols.split(','))];
-let lastSyncYear = null;
+let lastSyncYear: null | number = null;
 
-async function syncEarningsEvents() {
-  const currentYear = new Date().getFullYear();
+async function syncEvents(): Promise<void> {
+  const currentYear: number = new Date().getFullYear();
   if (currentYear !== lastSyncYear) {
     lastSyncYear = currentYear;
 
@@ -33,10 +33,11 @@ async function syncEarningsEvents() {
   await earningsEventsModel.syncEarningsEvents(config.calendarId, SYMBOLS);
 }
 
-await cpiEventsModel.syncCPIEvents(config.calendarId);
 await marketHolidayEventsModel.syncMarketHolidayEvents(config.calendarId);
+await fedEventsModel.syncFEDEvents(config.calendarId);
+await cpiEventsModel.syncCPIEvents(config.calendarId);
+await dividendEventsModel.syncDividendEvents(config.calendarId, SYMBOLS);
 await earningsEventsModel.syncEarningsEvents(config.calendarId, SYMBOLS);
 
-
 log.info('Scheduling interval');
-setInterval(syncEarningsEvents, DAY_IN_MILLIS);
+setInterval(syncEvents, DAY_IN_MILLIS);
