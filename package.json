@@ -1,5 +1,5 @@
 {
-  "name": "earnings-google-calendar",
+  "name": "trading-events-google-calendar",
   "version": "0.0.3",
   "description": "Fetch scheduled company earnings, dividends, CPI report dates and other info into google calendar.",
   "main": "app/app.ts",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/junajan/earnings-google-calendar.git"
+    "url": "git+https://github.com/junajan/trading-events-google-calendar.git"
   },
   "keywords": [
     "trading",
@@ -35,9 +35,9 @@
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/junajan/earnings-google-calendar/issues"
+    "url": "https://github.com/junajan/trading-events-google-calendar/issues"
   },
-  "homepage": "https://github.com/junajan/earnings-google-calendar#readme",
+  "homepage": "https://github.com/junajan/trading-events-google-calendar#readme",
   "dependencies": {
     "@google-cloud/local-auth": "^3.0.1",
     "cheerio": "1.0.0-rc.12",
