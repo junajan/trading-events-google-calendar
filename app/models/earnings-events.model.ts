@@ -1,9 +1,9 @@
 import config from 'config';
 import {calendar_v3} from "googleapis";
 
-import GoogleCalendarService from '../services/google-calendar.service.js';
-import YahooService, { Earnings } from '../services/yahoo-finance.service.js';
-import log from '../services/log.service.js';
+import GoogleCalendarService from '../services/google-calendar.service';
+import YahooService, { Earnings } from '../services/yahoo-finance.service';
+import log from '../services/log.service';
 import {getEventsMapKeyForEvent} from "../utils/events.util";
 import {EventMap} from "../types/event-map.type";
 

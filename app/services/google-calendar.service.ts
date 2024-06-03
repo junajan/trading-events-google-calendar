@@ -56,11 +56,7 @@ export default class GoogleCalendarService {
       maxResults: 2500,
     });
 
-    if (!result.data.items?.length) {
-      throw new Error('Invalid response from google calendar events!');
-    }
-
-    return result.data.items;
+    return result.data.items || [];
   }
 
   async createEvent(requestBody: calendar_v3.Schema$Event): Promise<calendar_v3.Schema$Event> {

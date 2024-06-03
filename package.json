@@ -5,13 +5,14 @@
   "main": "app/app.ts",
   "type": "module",
   "scripts": {
-    "run": "npx tsx app/app.ts",
+    "accept-calendar-invitation": "npx tsx ./commands/accept-calendar-invitation.command.ts",
     "sync-cpi-events": "npx tsx ./commands/sync-cpi-events.command.ts",
-    "sync-earnings-events": "npx tsx ./commands/sync-earnings-events.command.ts",
-    "sync-market-holiday-events": "node commands/sync-market-holiday-events.command.ts",
     "sync-dividend-events": "npx tsx ./commands/sync-dividend-events.command.ts",
+    "sync-earnings-events": "npx tsx ./commands/sync-earnings-events.command.ts",
     "sync-fed-events": "npx tsx ./commands/sync-fed-events.command.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "sync-market-holiday-events": "npx tsx ./commands/sync-market-holiday-events.command.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "npx tsx app/app.ts"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,6 @@
-import {
-  getDateFromDateTime,
-} from '../utils/common.util.js';
 import yahooFinance from 'yahoo-finance2';
+
+import {getDateFromDateTime} from '../utils/common.util';
 
 type QuoteSummaryModule = 'earnings' | 'summaryDetail' | 'calendarEvents';
 

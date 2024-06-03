@@ -1,11 +1,11 @@
 import config from 'config';
 
-import log from './services/log.service.js';
-import * as cpiEventsModel from '../app/models/cpi-events.model.js';
-import * as dividendEventsModel from './models/dividend-events.model.js';
-import * as earningsEventsModel from './models/earnings-events.model.js';
-import * as fedEventsModel from '../app/models/fed-events.model.js';
-import * as marketHolidayEventsModel from './models/market-holiday-events.model.js';
+import log from './services/log.service';
+import * as cpiEventsModel from '../app/models/cpi-events.model';
+import * as dividendEventsModel from './models/dividend-events.model';
+import * as earningsEventsModel from './models/earnings-events.model';
+import * as fedEventsModel from '../app/models/fed-events.model';
+import * as marketHolidayEventsModel from './models/market-holiday-events.model';
 
 const DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 const SYMBOLS = [...new Set(config.symbols.split(','))];

@@ -1,8 +1,8 @@
 import config from 'config';
 import nyseHolidays, { Holiday } from 'nyse-holidays';
 
-import GoogleCalendarService from '../services/google-calendar.service.js';
-import log from '../services/log.service.js';
+import GoogleCalendarService from '../services/google-calendar.service';
+import log from '../services/log.service';
 import {getEventsMapKeyForEvent} from "../utils/events.util";
 import {calendar_v3} from "googleapis";
 import {EventMap} from "../types/event-map.type";
