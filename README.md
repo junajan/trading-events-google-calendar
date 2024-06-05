@@ -61,7 +61,7 @@ After configuring all necessary components the usage is pretty straightforward:
 
 ```bash
 # to sync all events while
-npm run watch
+npm run app
 
 # to sync only single type of evens
 npm run sync-cpi-events
