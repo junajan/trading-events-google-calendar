@@ -52,9 +52,9 @@ export async function syncMarketHolidayEvents(calendarId: string): Promise<void>
   for (const event of newHolidayEvents) {
     const eventMapKey = getEventsMapKeyForEvent(event);
     if (existingEventsMap[eventMapKey]) {
-      log.info(`Persisting existing event event:`, event.summary);
+      log.info(`Persisting existing event event:`, event.summary, event.start?.date);
     } else {
-      log.info(`Creating event:`, event.summary);
+      log.info(`Creating event:`, event.summary, event.start?.date);
       await GoogleCalendar.createEvent(event);
     }
   }

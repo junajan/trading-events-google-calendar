@@ -56,10 +56,10 @@ export async function syncEarningsEvents(calendarId: string, symbols: string[]):
   for (const event of newEventDataList) {
     const eventMapKey = getEventsMapKeyForEvent(event);
     if (existingEventsMap[eventMapKey]) {
-      log.info(`Persisting existing event event:`, event.summary);
+      log.info(`Persisting existing event event:`, event.summary, event.start?.date);
       delete existingEventsMap[eventMapKey];
     } else {
-      log.info(`Creating event:`, event.summary);
+      log.info(`Creating event:`, event.summary, event.start?.date);
       await GoogleCalendar.createEvent(event);
     }
   }
