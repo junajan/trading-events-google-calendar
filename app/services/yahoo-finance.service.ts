@@ -35,11 +35,15 @@ export interface Dividend {
   symbol: string,
 }
 
-async function getEarningsData(symbol: string): Promise<Earnings> {
+async function getEarningsData(symbol: string): Promise<Earnings | null> {
   const result: any = await yahooFinance.quoteSummary(symbol, {modules: YAHOO_FINANCE_EARNINGS_MODULES});
   const {earningsChart} = result.earnings;
 
   const estimatedEarningsDateTimeStart = earningsChart.earningsDate[0];
+  if (!estimatedEarningsDateTimeStart) {
+    return null;
+  }
+
   return {
     estimatedEarningsDate: getDateFromDateTime(estimatedEarningsDateTimeStart),
     estimatedEarningsDateTime: estimatedEarningsDateTimeStart,

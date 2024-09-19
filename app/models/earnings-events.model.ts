@@ -48,12 +48,20 @@ export async function syncEarningsEvents(calendarId: string, symbols: string[]):
   log.info(`Downloading earnings info for ${symbols.length} symbols`);
   const newEventDataListPromises = symbols.map(async (symbol) => {
     const earnings = await YahooService.getEarningsData(symbol);
+    if (!earnings) {
+      return null;
+    }
+
     return formatEarningsToCalendarEvent(earnings);
   });
-  const newEventDataList = await Promise.all(newEventDataListPromises);
+  const newEventDataList = (await Promise.all(newEventDataListPromises))
 
   log.info(`Syncing ${newEventDataList.length} earnings events`);
   for (const event of newEventDataList) {
+    if (event === null) {
+      continue;
+    }
+
     const eventMapKey = getEventsMapKeyForEvent(event);
     if (existingEventsMap[eventMapKey]) {
       log.info(`Persisting existing event event:`, event.summary, event.start?.date);

@@ -33,11 +33,9 @@ async function syncEvents(): Promise<void> {
   await earningsEventsModel.syncEarningsEvents(config.calendarId, SYMBOLS);
 }
 
-await marketHolidayEventsModel.syncMarketHolidayEvents(config.calendarId);
-await fedEventsModel.syncFEDEvents(config.calendarId);
-await cpiEventsModel.syncCPIEvents(config.calendarId);
-await dividendEventsModel.syncDividendEvents(config.calendarId, SYMBOLS);
-await earningsEventsModel.syncEarningsEvents(config.calendarId, SYMBOLS);
+await syncEvents();
 
-log.info('Scheduling interval');
-setInterval(syncEvents, DAY_IN_MILLIS);
+if (process.argv[2] !== '--single') {
+  log.info('Scheduling interval');
+  setInterval(syncEvents, DAY_IN_MILLIS);
+}

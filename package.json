@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "accept-calendar-invitation": "npx tsx ./commands/accept-calendar-invitation.command.ts",
-    "app": "npx tsx app/app.ts",
+    "start": "npx tsx app/app.ts",
+    "single": "npx tsx app/app.ts --single",
     "sync-cpi-events": "npx tsx ./commands/sync-cpi-events.command.ts",
     "sync-dividend-events": "npx tsx ./commands/sync-dividend-events.command.ts",
     "sync-earnings-events": "npx tsx ./commands/sync-earnings-events.command.ts",
