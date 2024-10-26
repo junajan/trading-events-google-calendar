@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "accept-calendar-invitation": "npx tsx ./commands/accept-calendar-invitation.command.ts",
-    "start": "npx tsx app/app.ts",
+    "prod:start": "forever start -a --uid trading-calendar -c 'npx tsx' ./app/app.ts",
+    "prod:stop": "forever stop trading-calendar",
     "single": "npx tsx app/app.ts --single",
+    "start": "npx tsx app/app.ts",
     "sync-cpi-events": "npx tsx ./commands/sync-cpi-events.command.ts",
     "sync-dividend-events": "npx tsx ./commands/sync-dividend-events.command.ts",
     "sync-earnings-events": "npx tsx ./commands/sync-earnings-events.command.ts",
