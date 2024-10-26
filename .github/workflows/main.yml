@@ -2,8 +2,7 @@ name: Main CI
 
 on:
   push:
-    branches: [ deployment ]
-#    branches: [ main ]
+    branches: [ main ]
 
 jobs:
   build:
