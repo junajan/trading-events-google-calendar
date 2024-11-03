@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "accept-calendar-invitation": "npx tsx ./commands/accept-calendar-invitation.command.ts",
+    "dev": "npx tsx watch app/app.ts",
     "prod:start": "forever start -a --uid trading-calendar -c 'npx tsx' ./app/app.ts",
     "prod:stop": "forever stop trading-calendar",
     "single": "npx tsx app/app.ts --single",

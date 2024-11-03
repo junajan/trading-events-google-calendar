@@ -1,4 +1,5 @@
-import {calendar_v3, google} from 'googleapis';
+import { calendar_v3, google } from 'googleapis';
+import { getDateFromDateTime } from "../utils/common.util.ts";
 
 export default class GoogleCalendarService {
   scopes: string[] = ['https://www.googleapis.com/auth/calendar'];
@@ -47,8 +48,7 @@ export default class GoogleCalendarService {
   }
 
   async listFutureEvents(): Promise<Array<calendar_v3.Schema$Event>> {
-    const offsetDate = new Date();
-    offsetDate.setTime(0);
+    const offsetDate = new Date(getDateFromDateTime(new Date()));
 
     const result = await this.calendar.events.list({
       calendarId: this.calendarId,
