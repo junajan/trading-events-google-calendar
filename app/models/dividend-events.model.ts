@@ -48,7 +48,9 @@ export async function syncDividendEvents(calendarId: string, symbols: string[]):
     return dividend && formatDividendToCalendarEvent(dividend);
   });
   const newEventDataList = (await Promise.all(newEventDataListPromises))
-    .filter<calendar_v3.Schema$Event>((x): x is calendar_v3.Schema$Event => x !== undefined);
+    .filter<calendar_v3.Schema$Event>((event): event is calendar_v3.Schema$Event => (
+      !!event?.start?.date && new Date(event.start.date) > new Date()
+    ));
 
   log.info(`Syncing ${newEventDataList.length} dividend events`);
   for (const event of newEventDataList) {
