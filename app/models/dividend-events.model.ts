@@ -43,11 +43,24 @@ export async function syncDividendEvents(calendarId: string, symbols: string[]):
     }), {});
 
   log.info(`Downloading dividend info for ${symbols.length} symbols`);
-  const newEventDataListPromises = symbols.map(async (symbol) => {
-    const dividend = await YahooService.getDividendData(symbol);
-    return dividend && formatDividendToCalendarEvent(dividend);
-  });
-  const newEventDataList = (await Promise.all(newEventDataListPromises))
+  const CONCURRENCY_LIMIT = 2;
+  let newEventDataList: calendar_v3.Schema$Event[] = [];
+  for (let i = 0; i < symbols.length; i += CONCURRENCY_LIMIT) {
+    const chunk = symbols.slice(i, i + CONCURRENCY_LIMIT);
+    const chunkPromises = chunk.map(async (symbol) => {
+      const dividend = await YahooService.getDividendData(symbol);
+
+      const result = dividend && formatDividendToCalendarEvent(dividend);
+      if (result) {
+        newEventDataList.push(result);
+      }
+    });
+    // Wait for this chunk to finish before starting the next
+    await Promise.all(chunkPromises);
+    await new Promise(resolve => setTimeout(resolve, 5000));
+  }
+
+  newEventDataList = newEventDataList
     .filter<calendar_v3.Schema$Event>((event): event is calendar_v3.Schema$Event => (
       !!event?.start?.date && new Date(event.start.date) > new Date()
     ));
