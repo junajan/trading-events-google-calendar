@@ -43,7 +43,7 @@ export async function syncDividendEvents(calendarId: string, symbols: string[]):
     }), {});
 
   log.info(`Downloading dividend info for ${symbols.length} symbols`);
-  const CONCURRENCY_LIMIT = 1;
+  const CONCURRENCY_LIMIT = 2;
   let newEventDataList: calendar_v3.Schema$Event[] = [];
   for (let i = 0; i < symbols.length; i += CONCURRENCY_LIMIT) {
     const chunk = symbols.slice(i, i + CONCURRENCY_LIMIT);
@@ -57,7 +57,7 @@ export async function syncDividendEvents(calendarId: string, symbols: string[]):
     });
     // Wait for this chunk to finish before starting the next
     await Promise.all(chunkPromises);
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
   newEventDataList = newEventDataList

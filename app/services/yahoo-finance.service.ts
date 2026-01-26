@@ -1,4 +1,4 @@
-import yahooFinance from 'yahoo-finance2';
+import YahooFinance from 'yahoo-finance2';
 
 import {getDateFromDateTime} from '../utils/common.util';
 
@@ -36,8 +36,12 @@ export interface Dividend {
 }
 
 async function getEarningsData(symbol: string): Promise<Earnings | null> {
-  const result: any = await yahooFinance.quoteSummary(symbol, {modules: YAHOO_FINANCE_EARNINGS_MODULES});
-  const {earningsChart} = result.earnings;
+  const yahooFinance = new YahooFinance({
+    suppressNotices: ["yahooSurvey"],
+  });
+
+  const result: any = await yahooFinance.quoteSummary(symbol, { modules: YAHOO_FINANCE_EARNINGS_MODULES });
+  const { earningsChart } = result.earnings;
 
   const estimatedEarningsDateTimeStart = earningsChart.earningsDate[0];
   if (!estimatedEarningsDateTimeStart) {
@@ -58,6 +62,10 @@ async function getEarningsData(symbol: string): Promise<Earnings | null> {
 }
 
 async function getDividendData(symbol: string): Promise<Dividend | undefined> {
+  const yahooFinance = new YahooFinance({
+    suppressNotices: ["yahooSurvey"],
+  });
+
   const result: any = await yahooFinance.quoteSummary(symbol, {
     modules: YAHOO_FINANCE_DIVIDEND_MODULES,
   });

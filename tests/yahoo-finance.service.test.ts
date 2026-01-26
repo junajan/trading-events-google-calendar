@@ -1,7 +1,11 @@
-import yahooFinance from 'yahoo-finance2';
+import YahooFinance from 'yahoo-finance2';
 import YahooService from '../app/services/yahoo-finance.service';
 
 describe('YahooFinance service', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   test('getEarningsData returns earnings for given symbol', async () => {
     const mockYahooFinanceResult = {
       earnings: {
@@ -20,7 +24,8 @@ describe('YahooFinance service', () => {
         },
       },
     };
-    yahooFinance.quoteSummary = jest.fn().mockResolvedValue(mockYahooFinanceResult);
+
+    jest.spyOn(YahooFinance.prototype, 'quoteSummary').mockResolvedValueOnce(mockYahooFinanceResult);
 
     const earningsData = await YahooService.getEarningsData('AAPL');
     expect(earningsData).toMatchObject({
@@ -104,7 +109,8 @@ describe('YahooFinance service', () => {
         dividendDate: new Date('2024-06-03T00:00:00.000'),
       }
     };
-    yahooFinance.quoteSummary = jest.fn().mockResolvedValue(mockYahooFinanceResult);
+
+    jest.spyOn(YahooFinance.prototype, 'quoteSummary').mockResolvedValueOnce(mockYahooFinanceResult);
 
     const dividendData = await YahooService.getDividendData('AAPL');
     expect(dividendData).toMatchObject({
