@@ -7,6 +7,10 @@ type QuoteSummaryModule = 'earnings' | 'summaryDetail' | 'calendarEvents';
 const YAHOO_FINANCE_EARNINGS_MODULES: QuoteSummaryModule[] = ['earnings'];
 const YAHOO_FINANCE_DIVIDEND_MODULES: QuoteSummaryModule[] = ['summaryDetail', 'calendarEvents'];
 
+const yahooFinance = new YahooFinance({
+  suppressNotices: ["yahooSurvey"],
+});
+
 interface EarningsHistory {
   date: string
   actual: number,
@@ -35,12 +39,31 @@ export interface Dividend {
   symbol: string,
 }
 
-async function getEarningsData(symbol: string): Promise<Earnings | null> {
-  const yahooFinance = new YahooFinance({
-    suppressNotices: ["yahooSurvey"],
-  });
+interface YahooEarningsResponse {
+  earnings: {
+    earningsChart: {
+      earningsDate: Date[];
+      isEarningsDateEstimate: boolean;
+      currentQuarterEstimateDate: string;
+      currentQuarterEstimateYear: number;
+      quarterly: EarningsHistory[];
+    }
+  }
+}
 
-  const result: any = await yahooFinance.quoteSummary(symbol, { modules: YAHOO_FINANCE_EARNINGS_MODULES });
+interface YahooDividendResponse {
+  summaryDetail: {
+    dividendRate?: number;
+    currency: string;
+  },
+  calendarEvents: {
+    exDividendDate?: Date;
+    dividendDate?: Date;
+  }
+}
+
+async function getEarningsData(symbol: string): Promise<Earnings | null> {
+  const result = await yahooFinance.quoteSummary(symbol, { modules: YAHOO_FINANCE_EARNINGS_MODULES }) as YahooEarningsResponse;
   const { earningsChart } = result.earnings;
 
   const estimatedEarningsDateTimeStart = earningsChart.earningsDate[0];
@@ -62,20 +85,16 @@ async function getEarningsData(symbol: string): Promise<Earnings | null> {
 }
 
 async function getDividendData(symbol: string): Promise<Dividend | undefined> {
-  const yahooFinance = new YahooFinance({
-    suppressNotices: ["yahooSurvey"],
-  });
-
-  const result: any = await yahooFinance.quoteSummary(symbol, {
+  const result = await yahooFinance.quoteSummary(symbol, {
     modules: YAHOO_FINANCE_DIVIDEND_MODULES,
-  });
+  }) as YahooDividendResponse;
 
   const {
     summaryDetail,
     calendarEvents,
   } = result;
 
-  if (!summaryDetail.dividendRate || !calendarEvents.exDividendDate) {
+  if (!summaryDetail.dividendRate || !calendarEvents.exDividendDate || !calendarEvents.dividendDate) {
     return;
   }
 
